@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perbaikan Nilai — Transformasi Fungsi</title>
+<script>
+ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] }, svg: { fontCache: 'global' } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+ :root{
+ --primary:#0f3d6b; --accent:#c0392b; --hack:#0e7a4a;
+ --soft:#f4f7fb; --border:#d8e0ea; --gold:#b8860b;
+ --pg:#1f5fa6; --pgk:#7d3c98; --bs:#0e7a4a;
+ }
+ *{box-sizing:border-box;}
+ body{font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:#1b2733;line-height:1.55;margin:0;padding:24px 20px 120px;background:#f0f4f9;}
+ .container{max-width:1000px;margin:0 auto;}
+ header.cover{text-align:center;border:3px double var(--primary);border-radius:14px;padding:22px 18px;margin-bottom:20px;background:#fff;}
+ header.cover h1{color:var(--primary);margin:0 0 6px;font-size:23px;letter-spacing:.4px;}
+ header.cover h2{color:#54607a;margin:0 0 8px;font-size:14px;font-weight:500;}
+ .badge{display:inline-block;background:var(--accent);color:#fff;padding:4px 12px;border-radius:20px;font-size:11.5px;letter-spacing:.5px;margin:3px 2px;}
+ .badge.pg{background:var(--pg);}
+ .badge.pgk{background:var(--pgk);}
+ .badge.bs{background:var(--bs);}
+
+ .siswa-box{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:20px;}
+ .siswa-box h3{margin:0 0 10px;color:var(--primary);font-size:14px;}
+ .siswa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+ .siswa-grid label{display:block;font-size:12px;color:#556;margin-bottom:4px;font-weight:600;}
+ .siswa-grid input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;}
+ .siswa-grid input:focus{outline:none;border-color:var(--primary);}
+
+ /* timer & cheat indicator */
+ .timer-bar{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,var(--primary),#1f5fa6);color:#fff;border-radius:10px;padding:10px 16px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;box-shadow:0 3px 10px rgba(15,61,107,.2);}
+ .timer-bar .label{font-size:12.5px;letter-spacing:.4px;opacity:.9;}
+ .timer-bar .clock{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;}
+ .cheat-badge{background:#e74c3c;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;}
+ .progress-wrap{flex:1;min-width:180px;height:8px;background:rgba(255,255,255,.25);border-radius:6px;overflow:hidden;}
+ .progress-fill{height:100%;width:0%;background:#7ee08a;transition:width .3s;}
+
+ /* soal */
+ .soal{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;}
+ .soal.pg{border-left:5px solid var(--pg);}
+ .soal.pgk{border-left:5px solid var(--pgk);}
+ .soal.bs{border-left:5px solid var(--bs);}
+ .soal-head{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap;}
+ .soal-num{background:var(--primary);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+ .soal-title{font-weight:700;color:var(--primary);font-size:13.5px;letter-spacing:.2px;}
+ .tag{font-size:10.5px;font-weight:700;letter-spacing:.5px;padding:2px 9px;border-radius:12px;color:#fff;text-transform:uppercase;}
+ .tag.pg{background:var(--pg);}
+ .tag.pgk{background:var(--pgk);}
+ .tag.bs{background:var(--bs);}
+ .bab-label{font-size:11px;color:#889;letter-spacing:.4px;text-transform:uppercase;font-weight:600;margin-bottom:4px;}
+ .soal-body{font-size:14.5px;margin:8px 0 12px;}
+ .soal-body ol{margin:6px 0;padding-left:22px;}
+
+ /* opsi PG */
+ .opsi{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0 2px;font-size:14px;}
+ .opsi label{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;background:#fff;}
+ .opsi label:hover{border-color:var(--pg);background:#f7fbff;}
+ .opsi input[type="radio"]{margin-top:4px;accent-color:var(--pg);flex-shrink:0;}
+ .opsi label.checked{border-color:var(--pg);background:#eaf3fd;font-weight:600;}
+
+ /* opsi PGK */
+ .opsi-pgk{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0 2px;font-size:14px;}
+ .opsi-pgk label{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;background:#fff;}
+ .opsi-pgk label:hover{border-color:var(--pgk);background:#faf5fe;}
+ .opsi-pgk input[type="checkbox"]{margin-top:4px;accent-color:var(--pgk);flex-shrink:0;}
+ .opsi-pgk label.checked{border-color:var(--pgk);background:#f3e8fb;font-weight:600;}
+
+ /* tabel B/S */
+ table.bs{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0 2px;}
+ table.bs th{background:var(--bs);color:#fff;padding:7px 10px;font-size:12px;letter-spacing:.3px;text-align:left;}
+ table.bs th.c{text-align:center;width:90px;}
+ table.bs td{border:1px solid var(--border);padding:8px 10px;vertical-align:top;background:#fff;}
+ table.bs td.c{text-align:center;}
+ .bs-btn{display:inline-flex;gap:0;border:1.5px solid var(--bs);border-radius:8px;overflow:hidden;}
+ .bs-btn button{background:#fff;border:none;padding:6px 14px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--bs);transition:all .12s;font-family:inherit;}
+ .bs-btn button:hover{background:#e7f7ee;}
+ .bs-btn button.active{background:var(--bs);color:#fff;}
+
+ /* review */
+ .review-box{background:#f0f6ff;border:2px dashed var(--primary);border-radius:10px;padding:14px 16px;margin-top:12px;}
+ .review-box h4{margin:0 0 8px;color:var(--primary);font-size:13.5px;letter-spacing:.3px;}
+ .review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12.8px;}
+ @media (max-width:700px){.review-grid{grid-template-columns:1fr;}}
+ .review-card{background:#fff;border-radius:8px;padding:10px 12px;}
+ .review-card.formal{border-left:4px solid var(--pg);}
+ .review-card.hack{border-left:4px solid var(--hack);}
+ .review-card h5{margin:0 0 5px;font-size:12px;letter-spacing:.4px;text-transform:uppercase;}
+ .review-card.formal h5{color:var(--pg);}
+ .review-card.hack h5{color:var(--hack);}
+ .review-card ol{margin:0;padding-left:18px;}
+ .review-card li{margin-bottom:3px;}
+ .hasil{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0;font-size:13px;}
+ .hasil .kotak{padding:5px 11px;border-radius:6px;font-weight:700;}
+ .hasil .benar{background:#e7f7ee;color:var(--hack);border:1px solid #9ddcb8;}
+ .hasil .salah{background:#fdecea;color:var(--accent);border:1px solid #f0b3ac;}
+ .hasil .kunci-jawab{background:#fff7e0;color:var(--gold);border:1px solid #e8d18a;}
+ .jebakan{margin-top:9px;border-left:4px solid var(--accent);background:#fff6f5;padding:8px 12px;font-size:12.6px;border-radius:0 8px 8px 0;}
+ .jebakan b{color:var(--accent);}
+
+ /* status benar/salah pada opsi setelah review */
+ .opsi label.benar-opsi{border-color:var(--hack);background:#e7f7ee;}
+ .opsi label.salah-opsi{border-color:var(--accent);background:#fdecea;}
+ .opsi label.benar-opsi::after{content:"✓ KUNCI";margin-left:auto;font-size:10.5px;font-weight:800;color:var(--hack);}
+ .opsi label.salah-opsi::after{content:"✗ PILIHANMU";margin-left:auto;font-size:10.5px;font-weight:800;color:var(--accent);}
+ .opsi-pgk label.benar-opsi{border-color:var(--hack);background:#e7f7ee;}
+ .opsi-pgk label.salah-opsi{border-color:var(--accent);background:#fdecea;}
+ .opsi-pgk label.benar-opsi::after{content:"✓ KUNCI";margin-left:auto;font-size:10.5px;font-weight:800;color:var(--hack);}
+ .opsi-pgk label.salah-opsi::after{content:"✗ PILIHANMU";margin-left:auto;font-size:10.5px;font-weight:800;color:var(--accent);}
+ table.bs td.benar-sel{background:#e7f7ee;color:var(--hack);font-weight:700;}
+ table.bs td.salah-sel{background:#fdecea;color:var(--accent);font-weight:700;}
+
+ /* score panel */
+ #score-panel{display:none;background:#fff;border:3px double var(--primary);border-radius:14px;padding:24px;margin-bottom:22px;text-align:center;}
+ #score-panel h2{margin:0 0 4px;color:var(--primary);font-size:22px;}
+ .nilai-besar{font-size:60px;font-weight:900;line-height:1;margin:10px 0 4px;background:linear-gradient(135deg,var(--primary),#1f5fa6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+ .nilai-besar.gagal{background:linear-gradient(135deg,var(--accent),#e74c3c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+ .predikat{font-size:15px;font-weight:700;color:var(--gold);margin-bottom:12px;}
+ .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:16px 0;}
+ .stat-card{background:var(--soft);border-radius:10px;padding:12px 8px;}
+ .stat-card .angka{font-size:22px;font-weight:800;color:var(--primary);}
+ .stat-card .ket{font-size:11.5px;color:#667;letter-spacing:.3px;}
+
+ /* tombol aksi */
+ .action-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--border);padding:12px 20px;z-index:60;box-shadow:0 -3px 12px rgba(0,0,0,.08);}
+ .action-inner{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+ .action-info{font-size:13px;color:#556;}
+ .action-info b{color:var(--primary);font-size:15px;}
+ .btn{padding:12px 26px;border:none;border-radius:9px;font-size:14px;font-weight:800;letter-spacing:.4px;cursor:pointer;font-family:inherit;transition:all .15s;}
+ .btn-submit{background:linear-gradient(90deg,var(--hack),#13a063);color:#fff;box-shadow:0 3px 10px rgba(14,122,74,.3);}
+ .btn-submit:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(14,122,74,.4);}
+ .btn-submit:disabled{background:#b9c6d4;cursor:not-allowed;box-shadow:none;transform:none;}
+ .btn-reset{background:#eef2f7;color:var(--primary);border:1.5px solid var(--border);}
+ .btn-reset:hover{background:#e0e8f2;}
+
+ .peringatan{background:#fff7e0;border:1px solid #e8d18a;color:#8a6d1f;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none;}
+ .peringatan.show{display:block;}
+
+ footer{text-align:center;color:#7b8aa5;font-size:11.5px;margin-top:30px;padding-top:12px;border-top:1px dashed var(--border);}
+
+ @media print{
+ .action-bar,.timer-bar,.btn{display:none!important;}
+ body{background:#fff;padding:10mm;}
+ .soal{break-inside:avoid;}
+ }
+</style>
+</head>
+<body oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onpaste="return false;">
+<div class="container">
+
+ <header class="cover">
+ <h1>📝 PERBAIKAN NILAI</h1>
+ <h2>SMA/MA Kelas XII — Transformasi Fungsi (Translasi, Refleksi, &amp; Dilatasi)</h2>
+ <span class="badge pg">7 PILIHAN GANDA</span>
+ <span class="badge pgk">7 PG KOMPLEKS</span>
+ <span class="badge bs">7 BENAR/SALAH</span>
+ </header>
+
+ <div class="siswa-box">
+ <h3>👤 Identitas Peserta</h3>
+ <div class="siswa-grid">
+ <div><label>Nama Lengkap</label><input type="text" id="nama" placeholder="Tulis nama lengkap..."></div>
+ <div><label>Kelas</label><input type="text" id="kelas" placeholder="Contoh: XII IPA 1"></div>
+ </div>
+ </div>
+
+ <div class="timer-bar">
+ <div>
+ <div class="label">⏱️ WAKTU</div>
+ <div class="clock" id="clock">60:00</div>
+ </div>
+ <div class="cheat-badge" id="cheat-indicator">Pelanggaran: 0 / 3</div>
+ <div class="progress-wrap"><div class="progress-fill" id="progress"></div></div>
+ <div class="label" id="progress-text">0 / 21 soal dijawab</div>
+ </div>
+
+ <div class="peringatan" id="peringatan">⚠️ Masih ada soal yang belum dijawab. Pastikan semua sudah terisi sebelum menekan SELESAI.</div>
+
+ <div id="score-panel">
+ <h2>🎯 HASIL UJIAN</h2>
+ <div class="nilai-besar" id="nilai-besar">0</div>
+ <div class="predikat" id="predikat">—</div>
+ <div class="stat-grid">
+ <div class="stat-card"><div class="angka" id="stat-benar">0</div><div class="ket">SOAL BENAR</div></div>
+ <div class="stat-card"><div class="angka" id="stat-salah">0</div><div class="ket">SOAL SALAH</div></div>
+ <div class="stat-card"><div class="angka" id="stat-poin">0</div><div class="ket">TOTAL POIN</div></div>
+ <div class="stat-card"><div class="angka" id="stat-maks">21</div><div class="ket">POIN MAKSIMAL</div></div>
+ </div>
+ <div style="font-size:13px;color:#667;">Nilai = (Total Poin ÷ 21) × 100</div>
+ </div>
+
+ <div id="soal-container"></div>
+
+ <footer>
+ 📝 Perbaikan Nilai — SMA/MA Kelas XII<br>
+ Sistem Ujian Terproteksi • Fitur Deteksi Kecurangan Aktif
+ </footer>
+</div>
+
+<div class="action-bar">
+ <div class="action-inner">
+ <div class="action-info">Terjawab: <b id="answered-count">0</b> / 21</div>
+ <div style="display:flex;gap:10px;">
+ <button class="btn btn-reset" id="btn-reset" onclick="resetUjian()">🔄 Reset</button>
+ <button class="btn btn-submit" id="btn-submit" onclick="selesaikan()">✅ SELESAI &amp; LIHAT SKOR</button>
+ </div>
+ </div>
+</div>
+
+<script>
+/* ============================================================
+ DATA SOAL (21 Soal Transformasi Fungsi — Tanpa Trigonometri/Logaritma)
+ ============================================================ */
+const questions = [
+ /* ---------- PILIHAN GANDA (1-7) ---------- */
+ {
+ id: 1, bab: "Translasi Fungsi", type: "pg",
+ title: "Translasi Grafis Parabola",
+ body: `Diketahui grafik fungsi kuadrat $f(x) = x^2 - 4x + 3$. Jika grafik tersebut ditranslasikan 3 satuan ke kanan dan 2 satuan ke atas menghasilkan grafik $g(x)$, maka persamaan fungsi $g(x)$ adalah …`,
+ options: [
+ "$g(x) = x^2 - 10x + 26$",
+ "$g(x) = x^2 - 10x + 22$",
+ "$g(x) = x^2 - 2x + 2$",
+ "$g(x) = x^2 - 4x + 8$",
+ "$g(x) = x^2 - 10x + 24$"
+ ],
+ correct: "A",
+ formal: `<ol>
+ <li>Translasi 3 satuan ke kanan: ganti $x$ dengan $(x - 3)$.</li>
+ <li>Translasi 2 satuan ke atas: tambahkan $2$ pada nilai fungsi.</li>
+ <li>$g(x) = f(x - 3) + 2 = (x - 3)^2 - 4(x - 3) + 3 + 2$</li>
+ <li>$g(x) = (x^2 - 6x + 9) - 4x + 12 + 5 = x^2 - 10x + 26$.</li>
+ </ol>`,
+ hack: `<b>Titik Puncak:</b> Puncak awal $f(x)$ di $x = -b/(2a) = 2$, $y = f(2) = -1 \\Rightarrow (2,-1)$.<br>Setelah digeser $(+3, +2)$, puncak baru menjadi $(5, 1)$.<br>Cek opsi yang punya puncak $(5,1)$: $g(5) = 25 - 50 + 26 = 1$. Opsi A cocok!`,
+ trap: `Sering terbalik tanda saat pergeseran horizontal: pergeseran ke kanan menggunakan $(x - 3)$, bukan $(x + 3)$.`
+ },
+ {
+ id: 2, bab: "Refleksi Fungsi", type: "pg",
+ title: "Refleksi Terhadap Sumbu-y",
+ body: `Fungsi eksponensial $f(x) = 2^{3x-1} + 4$ direfleksikan terhadap sumbu-$y$ menghasilkan $g(x)$. Nilai dari $g(1)$ adalah …`,
+ options: ["$4\\frac{1}{16}$", "$4\\frac{1}{8}$", "$4\\frac{1}{4}$", "$12$", "$20$"],
+ correct: "A",
+ formal: `<ol>
+ <li>Refleksi terhadap sumbu-$y$: ganti $x$ dengan $-x$.</li>
+ <li>$g(x) = f(-x) = 2^{3(-x)-1} + 4 = 2^{-3x-1} + 4$.</li>
+ <li>Hitung $g(1)$: $g(1) = 2^{-3(1)-1} + 4 = 2^{-4} + 4 = \\frac{1}{16} + 4 = 4\\frac{1}{16}$.</li>
+ </ol>`,
+ hack: `Refleksi sumbu-$y$ berarti $g(1) = f(-1)$.<br>Langsung masukkan $x = -1$ ke $f(x)$: $f(-1) = 2^{3(-1)-1} + 4 = 2^{-4} + 4 = 4\\frac{1}{16}$. Praktis tanpa mencari fungsi $g(x)$ secara utuh!`,
+ trap: `Tukar konsep refleksi: refleksi sumbu-$x$ mengubah tanda seluruh fungsi $-f(x)$, sedangkan refleksi sumbu-$y$ hanya mengubah input $f(-x)$.`
+ },
+ {
+ id: 3, bab: "Dilatasi Vertikal", type: "pg",
+ title: "Stretching Vertikal Fungsi Mutlak",
+ body: `Grafik $f(x) = |x - 2| + 1$ mengalami peregangan vertikal (vertical stretching) dengan faktor skala $3$. Persamaan fungsi hasil dilatasi tersebut adalah …`,
+ options: [
+ "$g(x) = 3|x - 2| + 1$",
+ "$g(x) = 3|x - 2| + 3$",
+ "$g(x) = |3x - 2| + 1$",
+ "$g(x) = |3x - 6| + 3$",
+ "$g(x) = |x - 6| + 3$"
+ ],
+ correct: "B",
+ formal: `<ol>
+ <li>Dilatasi/stretching vertikal dengan faktor $k=3$ berarti dikalikan pada output seluruh fungsi: $g(x) = 3 \\cdot f(x)$.</li>
+ <li>$g(x) = 3(|x - 2| + 1) = 3|x - 2| + 3$.</li>
+ </ol>`,
+ hack: `Perhatikan bahwa peregangan vertikal mengalikan SELURUH nilai $y$, termasuk konstanta di luar tanda mutlak ($1 \\times 3 = 3$).`,
+ trap: `Hanya mengalikan bentuk mutlaknya saja $3|x-2| + 1$ (Opsi A) dan lupa mengalikan konstanta $+1$.`
+ },
+ {
+ id: 4, bab: "Dilatasi Horizontal", type: "pg",
+ title: "Compressing Horizontal Fungsi Kuadrat",
+ body: `Jika grafik $f(x) = x^2 + 2x$ mengalami pengompresan horizontal (horizontal compressing) dengan faktor skala $\\frac{1}{2}$, maka persamaan fungsi baru $g(x)$ adalah …`,
+ options: [
+ "$g(x) = 2x^2 + 4x$",
+ "$g(x) = 4x^2 + 4x$",
+ "$g(x) = \\frac{1}{2}x^2 + x$",
+ "$g(x) = \\frac{1}{4}x^2 + x$",
+ "$g(x) = 4x^2 + 2x$"
+ ],
+ correct: "B",
+ formal: `<ol>
+ <li>Pengompresan horizontal sebesar $\\frac{1}{2}$ berarti mengganti $x$ dengan $2x$, yaitu $g(x) = f(2x)$.</li>
+ <li>$g(x) = (2x)^2 + 2(2x) = 4x^2 + 4x$.</li>
+ </ol>`,
+ hack: `Pengompresan horizontal faktor $1/k$ membuat grafik menyempit ke sumbu-$y$, artinya input $x$ bekerja $k$ kali lebih cepat. Ganti $x \\to 2x$.`,
+ trap: `Mengalikan persamaan dengan $\\frac{1}{2}$ secara keseluruhan (itu adalah dilatasi vertikal, bukan horizontal).`
+ },
+ {
+ id: 5, bab: "Komposisi Transformasi", type: "pg",
+ title: "Kombinasi Translasi dan Refleksi",
+ body: `Fungsi $f(x) = x^2 - 3$ dicerminkan terhadap sumbu-$x$, kemudian ditranslasikan 4 satuan ke bawah. Persamaan peta fungsi tersebut adalah …`,
+ options: [
+ "$g(x) = -x^2 - 1$",
+ "$g(x) = -x^2 + 1$",
+ "$g(x) = -x^2 - 7$",
+ "$g(x) = x^2 - 7$",
+ "$g(x) = -x^2 + 7$"
+ ],
+ correct: "A",
+ formal: `<ol>
+ <li>Refleksi sumbu-$x$: $y_1 = -f(x) = -(x^2 - 3) = -x^2 + 3$.</li>
+ <li>Translasi 4 satuan ke bawah: $g(x) = y_1 - 4 = (-x^2 + 3) - 4 = -x^2 - 1$.</li>
+ </ol>`,
+ hack: `Uji titik: Titik $(0, -3)$ direfleksikan terhadap sumbu-$x$ menjadi $(0, 3)$. Kemudian digeser 4 ke bawah menjadi $(0, -1)$. Cek opsi saat $x=0$, yang menghasilkan $-1$ adalah Opsi A.`,
+ trap: `Lupa mendistribusikan tanda minus saat refleksi sumbu-$x$, sehingga $-(x^2 - 3)$ keliru ditulis $-x^2 - 3$.`
+ },
+ {
+ id: 6, bab: "Translasi & Dilatasi", type: "pg",
+ title: "Kombinasi Dilatasi Vertikal dan Pergeseran",
+ body: `Grafik fungsi $f(x) = 2^x$ diregangkan secara vertikal dengan faktor skala $2$, lalu digeser ke kiri sejauh 3 satuan. Fungsi hasil transformasi $g(x)$ dapat dinyatakan sebagai …`,
+ options: [
+ "$g(x) = 2^{x+4}$",
+ "$g(x) = 2^{x+3} + 2$",
+ "$g(x) = 2^{x+2}$",
+ "$g(x) = 2^{x-2}$",
+ "$g(x) = 2^{2x+3}$"
+ ],
+ correct: "A",
+ formal: `<ol>
+ <li>Peregangan vertikal faktor 2: $y_1 = 2 \\cdot f(x) = 2 \\cdot 2^x = 2^{x+1}$.</li>
+ <li>Pergeseran 3 satuan ke kiri: ganti $x$ dengan $x + 3$.</li>
+ <li>$g(x) = 2^{(x+3)+1} = 2^{x+4}$.</li>
+ </ol>`,
+ hack: `Gunakan sifat eksponen: $2 \\cdot 2^{x+3} = 2^{1 + x + 3} = 2^{x+4}$.`,
+ trap: `Menganggap peregangan vertikal faktor 2 pada $2^x$ mengubah basis menjadi $4^x$.`
+ },
+ {
+ id: 7, bab: "Komposisi Kompleks", type: "pg",
+ title: "Menentukan Nilai dari Grafik Transformasi",
+ body: `Fungsi $f(x) = x^3 - x$. Fungsi $g(x)$ diperoleh dengan melakukan *horizontal stretching* dengan faktor $2$, diikuti refleksi terhadap sumbu-$y$. Nilai $g(2)$ adalah …`,
+ options: ["$0$", "$-2$", "$2$", "$-6$", "$6$"],
+ correct: "A",
+ formal: `<ol>
+ <li>Horizontal stretching faktor 2: ganti $x \\to \\frac{x}{2}$.</li>
+ <li>Refleksi sumbu-$y$: ganti $x \\to -x$, sehingga secara keseluruhan $x \\to -\\frac{x}{2}$.</li>
+ <li>$g(x) = f\\left(-\\frac{x}{2}\\right) = \\left(-\\frac{x}{2}\\right)^3 - \\left(-\\frac{x}{2}\\right) = -\\frac{x^3}{8} + \\frac{x}{2}$.</li>
+ <li>$g(2) = -\\frac{8}{8} + \\frac{2}{2} = -1 + 1 = 0$.</li>
+ </ol>`,
+ hack: `Langsung masukkan $x=2$: transformasi membuat input awal $f$ menjadi $-\\frac{2}{2} = -1$.<br>Maka $g(2) = f(-1) = (-1)^3 - (-1) = -1 + 1 = 0$.`,
+ trap: `Salah menentukan invers faktor horizontal stretching (faktor 2 menggunakan $\\frac{x}{2}$, bukan $2x$).`
+ },
+
+ /* ---------- PILIHAN GANDA KOMPLEKS (8-14) ---------- */
+ {
+ id: 8, bab: "Translasi Fungsi", type: "pgk",
+ title: "Sifat-Sifat Hasil Translasi Parabola",
+ body: `Grafik $f(x) = x^2 - 4$ ditranslasikan oleh $\\binom{-2}{3}$ menghasilkan $g(x)$.<br><b>Pilihlah SEMUA pernyataan yang BENAR</b> (jawaban benar lebih dari satu).`,
+ options: [
+ "Persamaan $g(x) = x^2 + 4x + 3$",
+ "Titik puncak $g(x)$ berada di $(-2, -1)$",
+ "Grafik $g(x)$ memotong sumbu-$y$ di titik $(0, 3)$",
+ "Grafik $g(x)$ diperoleh dengan menggeser $f(x)$ 2 satuan ke kiri dan 3 satuan ke atas",
+ "Nilai minimum fungsi $g(x)$ adalah $3$"
+ ],
+ correct: ["A","B","C","D"],
+ formal: `<ol>
+ <li>A: $g(x) = f(x+2) + 3 = (x+2)^2 - 4 + 3 = x^2 + 4x + 4 - 1 = x^2 + 4x + 3$ ✔ <b>BENAR</b></li>
+ <li>B: Puncak awal $(0,-4)$, ditranslasi $\\binom{-2}{3} \\to (-2, -1)$ ✔ <b>BENAR</b></li>
+ <li>C: $g(0) = 0 + 0 + 3 = 3 \\Rightarrow (0,3)$ ✔ <b>BENAR</b></li>
+ <li>D: Translasi $\\binom{-2}{3}$ berarti 2 ke kiri dan 3 ke atas ✔ <b>BENAR</b></li>
+ <li>E: Nilai minimum $g(x)$ adalah ordinat puncak, yaitu $-1$ (bukan 3) ✘ <b>SALAH</b></li>
+ </ol>`,
+ hack: `Cek puncak cepat: $f(x)$ punya puncak $(0,-4)$. Geser ke $(-2, -1)$. Koordinat $y=-1$ adalah nilai minimumnya! Opsi E langsung terdeteksi salah.`,
+ trap: `Menganggap angka $+3$ pada vektor translasi sebagai nilai minimum baru.`
+ },
+ {
+ id: 9, bab: "Refleksi Fungsi", type: "pgk",
+ title: "Analisis Refleksi Fungsi Rasional",
+ body: `Diketahui $f(x) = \\frac{1}{x-2} + 3$.<br><b>Pilihlah SEMUA pernyataan yang BENAR.</b>`,
+ options: [
+ "Refleksi $f(x)$ terhadap sumbu-$x$ menghasilkan $g(x) = -\\frac{1}{x-2} - 3$",
+ "Refleksi $f(x)$ terhadap sumbu-$y$ menghasilkan $h(x) = -\\frac{1}{x+2} + 3$",
+ "Asimtot horizontal dari hasil refleksi sumbu-$x$ adalah $y = -3$",
+ "Asimtot vertikal dari hasil refleksi sumbu-$y$ adalah $x = -2$",
+ "Titik potong sumbu-$y$ dari hasil refleksi sumbu-$x$ berada di $(0, 3,5)$"
+ ],
+ correct: ["A","B","C","D"],
+ formal: `<ol>
+ <li>A: Refleksi sumbu-$x$: $-f(x) = -\\left(\\frac{1}{x-2} + 3\\right) = -\\frac{1}{x-2} - 3$ ✔ <b>BENAR</b></li>
+ <li>B: Refleksi sumbu-$y$: $f(-x) = \\frac{1}{-x-2} + 3 = -\\frac{1}{x+2} + 3$ ✔ <b>BENAR</b></li>
+ <li>C: Dari $-f(x)$, saat $x \\to \\infty$, $y \\to -3$ ✔ <b>BENAR</b></li>
+ <li>D: Penyebut $h(x)$ adalah $x+2=0 \\Rightarrow x=-2$ ✔ <b>BENAR</b></li>
+ <li>E: Untuk $-f(x)$, $y(0) = -\\frac{1}{-2} - 3 = 0,5 - 3 = -2,5 \\neq 3,5$ ✘ <b>SALAH</b></li>
+ </ol>`,
+ hack: `Untuk refleksi sumbu-$x$, bayangkan seluruh grafik di-flip secara vertikal, sehingga asimtot $y=3$ menjadi $y=-3$.`,
+ trap: `Lupa mencerminkan konstanta di luar pecahan saat melakukan refleksi terhadap sumbu-$x$.`
+ },
+ {
+ id: 10, bab: "Dilatasi Fungsi Eksponen", type: "pgk",
+ title: "Stretching & Compressing Fungsi Eksponen",
+ body: `Diketahui $f(x) = 3^x$. Diberikan fungsi $g(x) = 2 \\cdot 3^{2x}$.<br><b>Pilihlah SEMUA pernyataan yang BENAR.</b>`,
+ options: [
+ "Grafik $g(x)$ mengalami peregangan vertikal (vertical stretching) dengan faktor 2 dari $f(x)$",
+ "Grafik $g(x)$ mengalami pengompresan horizontal (horizontal compressing) dengan faktor $\\frac{1}{2}$ dari $f(x)$",
+ "Titik potong sumbu-$y$ dari fungsi $g(x)$ berada di $(0, 2)$",
+ "Nilai $g(1) = 18$",
+ "Fungsi $g(x)$ bernilai negatif untuk $x < 0$"
+ ],
+ correct: ["A","B","C","D"],
+ formal: `<ol>
+ <li>A: Pengali 2 di luar fungsi memperbesar nilai $y$ sebesar 2 kali (vertical stretching) ✔ <b>BENAR</b></li>
+ <li>B: Pengali 2 pada eksponen $2x$ menyempitkan grafik secara horizontal dengan faktor $1/2$ ✔ <b>BENAR</b></li>
+ <li>C: $g(0) = 2 \\cdot 3^0 = 2 \\cdot 1 = 2 \\Rightarrow (0,2)$ ✔ <b>BENAR</b></li>
+ <li>D: $g(1) = 2 \\cdot 3^{2(1)} = 2 \\cdot 9 = 18$ ✔ <b>BENAR</b></li>
+ <li>E: Fungsi eksponensial $2 \\cdot 3^{2x} > 0$ untuk seluruh $x \\in \\mathbb{R}$ ✘ <b>SALAH</b></li>
+ </ol>`,
+ hack: `Ganti input: $g(0) = 2(1) = 2$, $g(1) = 2(9) = 18$. Eksponen selalu bernilai positif untuk seluruh Domain real!`,
+ trap: `Mengira nilai $x$ negatif menghasilkan output negatif, padahal $3^{-2} = 1/9$ (tetap positif).`
+ },
+ {
+ id: 11, bab: "Translasi & Refleksi", type: "pgk",
+ title: "Peta Garis Linear",
+ body: `Garis $f(x) = 2x - 5$ ditranslasikan oleh $\\binom{1}{-2}$ kemudian dicerminkan terhadap sumbu-$y$ menghasilkan $g(x)$.<br><b>Pilihlah SEMUA pernyataan yang BENAR.</b>`,
+ options: [
+ "Setelah ditranslasi, persamaannya menjadi $y = 2x - 9$",
+ "Persamaan akhir $g(x) = -2x - 9$",
+ "Gradien dari $g(x)$ adalah $-2$",
+ "Grafik $g(x)$ memotong sumbu-$y$ di $(0, -9)$",
+ "$g(x)$ sejajar dengan garis asal $f(x)$"
+ ],
+ correct: ["A","B","C","D"],
+ formal: `<ol>
+ <li>Translasi $\\binom{1}{-2}$: $y_1 = 2(x-1) - 5 - 2 = 2x - 2 - 7 = 2x - 9$ ✔ <b>BENAR</b> (Pernyataan A)</li>
+ <li>Refleksi sumbu-$y$: $g(x) = 2(-x) - 9 = -2x - 9$ ✔ <b>BENAR</b> (Pernyataan B)</li>
+ <li>Gradien $g(x)$ adalah $-2$ ✔ <b>BENAR</b> (Pernyataan C)</li>
+ <li>Potong sumbu-$y$: $g(0) = -9 \\Rightarrow (0,-9)$ ✔ <b>BENAR</b> (Pernyataan D)</li>
+ <li>Gradien asal $= 2$, gradien baru $= -2$, jadi tidak sejajar ✘ <b>SALAH</b></li>
+ </ol>`,
+ hack: `Refleksi terhadap sumbu-$y$ selalu mengubah tanda gradien fungsi linear ($m \\to -m$). Karena gradien berubah, garis pasti tidak sejajar.`,
+ trap: `Menganggap pergeseran dan refleksi sumbu-$y$ tidak mengubah sifat sejajar garis.`
+ },
+ {
+ id: 12, bab: "Dilatasi Horizontal", type: "pgk",
+ title: "Stretching Horizontal Fungsi Eksponensial",
+ body: `Diketahui $f(x) = 4^x$. Fungsi $g(x) = f\\left(\\frac{1}{2}x\\right)$.<br><b>Pilihlah SEMUA pernyataan yang BENAR.</b>`,
+ options: [
+ "$g(x)$ merupakan hasil peregangan horizontal (horizontal stretching) dari $f(x)$ dengan faktor 2",
+ "$g(x) = 2^x$",
+ "Nilai $g(2) = 4$",
+ "Titik potong sumbu-$y$ fungsi $g(x)$ sama dengan $f(x)$, yaitu $(0,1)$",
+ "$g(x)$ selalu bernilai negatif untuk $x < 0$"
+ ],
+ correct: ["A","B","C","D"],
+ formal: `<ol>
+ <li>A: Mengganti $x \\to \\frac{x}{2}$ adalah horizontal stretching faktor 2 ✔ <b>BENAR</b></li>
+ <li>B: $g(x) = 4^{x/2} = (2^2)^{x/2} = 2^x$ ✔ <b>BENAR</b></li>
+ <li>C: $g(2) = 2^2 = 4$ ✔ <b>BENAR</b></li>
+ <li>D: $g(0) = 2^0 = 1$ dan $f(0) = 4^0 = 1$ ✔ <b>BENAR</b></li>
+ <li>E: Fungsi eksponensial $2^x > 0$ untuk seluruh $x \\in \\mathbb{R}$ ✘ <b>SALAH</b></li>
+ </ol>`,
+ hack: `Substitusi sifat eksponen: $4^{x/2} = \\sqrt{4}^x = 2^x$. Sederhanakan bentuk fungsi dulu sebelum mengevaluasi opsi!`,
+ trap: `Menganggap $2^x$ bernilai negatif jika $x$ negatif (misal $2^{-1} = 1/2$, tetap positif!).`
+ },
+ {
+ id: 13, bab: "Urutan Transformasi", type: "pgk",
+ title: "Pengaruh Urutan Transformasi",
+ body: `Diketahui $f(x) = x^2$.<br>
+Proses I: Ditranslasi 2 satuan ke atas, lalu direfleksikan terhadap sumbu-$x$ (menghasilkan $g(x)$).<br>
+Proses II: Direfleksikan terhadap sumbu-$x$, lalu ditranslasi 2 satuan ke atas (menghasilkan $h(x)$).<br>
+<b>Pilihlah SEMUA pernyataan yang BENAR.</b>`,
+ options: [
+ "$g(x) = -x^2 - 2$",
+ "$h(x) = -x^2 + 2$",
+ "$g(x) \\neq h(x)$",
+ "Titik puncak $g(x)$ adalah $(0, -2)$",
+ "Titik puncak $h(x)$ adalah $(0, -2)$"
+ ],
+ correct: ["A","B","C","D"],
+ formal: `<ol>
+ <li>Proses I: $(x^2 + 2) \\to -(x^2 + 2) = -x^2 - 2 = g(x)$ ✔ <b>BENAR</b></li>
+ <li>Proses II: $-x^2 \\to -x^2 + 2 = h(x)$ ✔ <b>BENAR</b></li>
+ <li>Karena $g(x) = -x^2 - 2$ dan $h(x) = -x^2 + 2$, maka $g(x) \\neq h(x)$ ✔ <b>BENAR</b></li>
+ <li>Puncak $g(x)$ di $(0, -2)$ ✔ <b>BENAR</b></li>
+ <li>Puncak $h(x)$ di $(0, 2)$, bukan $(0,-2)$ ✘ <b>SALAH</b></li>
+ </ol>`,
+ hack: `<b>Aturan Komutatif:</b> Refleksi dan Translasi tidak bersifat komutatif! Urutan pengerjaan mengubah hasil akhir secara drastis.`,
+ trap: `Mengabaikan tanda kurung saat melakukan refleksi setelah translasi.`
+ },
+ {
+ id: 14, bab: "Transformasi Gabungan", type: "pgk",
+ title: "Transformasi Fungsi Kubik",
+ body: `Fungsi $f(x) = x^3$. Dilakukan transformasi berikut secara berurutan:
+1. Peregangan vertikal faktor 2
+2. Translasi 1 satuan ke kanan
+3. Refleksi terhadap sumbu-$y$
+Menghasilkan $g(x)$.<br><b>Pilihlah SEMUA pernyataan yang BENAR.</b>`,
+ options: [
+ "Setelah langkah 1, fungsi menjadi $2x^3$",
+ "Setelah langkah 2, fungsi menjadi $2(x-1)^3$",
+ "Hasil akhir $g(x) = -2(x+1)^3$",
+ "$g(0) = -2$",
+ "Nilai $g(1) = -16$"
+ ],
+ correct: ["A","B","C","D","E"],
+ formal: `<ol>
+ <li>Langkah 1: $y_1 = 2x^3$ ✔ <b>BENAR</b></li>
+ <li>Langkah 2: $y_2 = 2(x-1)^3$ ✔ <b>BENAR</b></li>
+ <li>Langkah 3 (refleksi sumbu-$y$): ganti $x \\to -x \\Rightarrow g(x) = 2(-x-1)^3 = 2(-(x+1))^3 = -2(x+1)^3$ ✔ <b>BENAR</b></li>
+ <li>$g(0) = -2(1)^3 = -2$ ✔ <b>BENAR</b></li>
+ <li>$g(1) = -2(1+1)^3 = -2(8) = -16$ ✔ <b>BENAR</b></li>
+ </ol>`,
+ hack: `Perhatikan bentuk $(-x-1)^3$: keluarkan $-1$ menjadi $(-1)^3 (x+1)^3 = -(x+1)^3$. Semua opsi A, B, C, D, E benar!`,
+ trap: `Hati-hati saat memangkatkan bilangan negatif pada pangkat ganjil: $(-1)^3 = -1$.`
+ },
+
+ /* ---------- BENAR / SALAH (15-21) ---------- */
+ {
+ id: 15, bab: "Translasi Fungsi", type: "bs",
+ title: "Identifikasi Pergeseran Fungsi",
+ body: `Ditentukan fungsi awal $f(x) = x^2 + 2x$.<br>Tentukan **Benar** atau **Salah** untuk setiap pernyataan berikut.`,
+ statements: [
+ "Grafik $f(x - 2)$ merupakan pergeseran $f(x)$ sejauh 2 satuan ke kanan.",
+ "Persamaan $f(x - 2) = x^2 - 2x$.",
+ "Grafik $f(x) + 3$ memiliki titik puncak di $(-1, 2)$.",
+ "Translasi tidak mengubah bentuk dasar dan ukuran grafik."
+ ],
+ correct: ["B","B","B","B"],
+ formal: `<ol>
+ <li>$f(x-2)$ melambangkan pergeseran 2 satuan ke kanan → <b>BENAR</b></li>
+ <li>$f(x-2) = (x-2)^2 + 2(x-2) = x^2 - 4x + 4 + 2x - 4 = x^2 - 2x$ → <b>BENAR</b></li>
+ <li>Puncak awal $f(x)$: $x = -2/2 = -1$, $y = (-1)^2 + 2(-1) = -1$. Digeser ke atas 3: $y = -1 + 3 = 2 \\Rightarrow (-1,2)$ → <b>BENAR</b></li>
+ <li>Translasi adalah isometri (hanya memindahkan tanpa merubah ukuran/bentuk) → <b>BENAR</b></li>
+ </ol>`,
+ hack: `Translasi merupakan **rigids transformation** (isometri), sehingga ukuran dan bentuk grafik dijamin 100% sama/kongruen.`,
+ trap: `Menghitung $(x-2)^2 + 2(x-2)$ dengan terburu-buru hingga lupa mengalikan $2$ dengan $-2$.`
+ },
+ {
+ id: 16, bab: "Refleksi Fungsi", type: "bs",
+ title: "Pernyataan Refleksi Sumbu-x dan Sumbu-y",
+ body: `Diketahui $f(x) = 3^x - 2$.<br>Tentukan **Benar** atau **Salah** untuk setiap pernyataan berikut.`,
+ statements: [
+ "Refleksi $f(x)$ terhadap sumbu-$x$ adalah $g(x) = -3^x + 2$.",
+ "Refleksi $f(x)$ terhadap sumbu-$y$ adalah $h(x) = 3^{-x} - 2$.",
+ "Asimtot datar dari $g(x)$ adalah $y = 2$.",
+ "Titik potong sumbu-$y$ dari $h(x)$ adalah $(0, -1)$."
+ ],
+ correct: ["B","B","B","B"],
+ formal: `<ol>
+ <li>$g(x) = -f(x) = -(3^x - 2) = -3^x + 2$ → <b>BENAR</b></li>
+ <li>$h(x) = f(-x) = 3^{-x} - 2$ → <b>BENAR</b></li>
+ <li>Saat $x \\to \\infty$, $3^x \\to \\infty$, namun untuk $x \\to -\\infty$, $-3^x \\to 0$, maka $g(x) \\to 2$. Asimtot datar $y = 2$ → <b>BENAR</b></li>
+ <li>$h(0) = 3^0 - 2 = 1 - 2 = -1 \\Rightarrow (0,-1)$ → <b>BENAR</b></li>
+ </ol>`,
+ hack: `Refleksi sumbu-$x$ membalik posisi asimtot datar $y = -2$ menjadi $y = 2$.`,
+ trap: `Menganggap refleksi sumbu-$y$ ikut mengubah tanda konstanta di luar eksponen.`
+ },
+ {
+ id: 17, bab: "Dilatasi Vertikal vs Horizontal", type: "bs",
+ title: "Membedakan Scaling Vertikal dan Horizontal",
+ body: `Diberikan fungsi kuadrat $f(x) = x^2$.<br>Tentukan **Benar** atau **Salah** untuk setiap pernyataan berikut.`,
+ statements: [
+ "Fungsi $g(x) = 4f(x)$ merupakan peregangan vertikal dengan faktor 4.",
+ "Fungsi $h(x) = f(2x)$ merupakan pengompresan horizontal dengan faktor 1/2.",
+ "Untuk fungsi $f(x) = x^2$, grafik $g(x) = 4f(x)$ persis sama dengan $h(x) = f(2x)$.",
+ "Peregangan vertikal dengan faktor $k > 1$ membuat grafik menjauhi sumbu-$x$."
+ ],
+ correct: ["B","B","B","B"],
+ formal: `<ol>
+ <li>$g(x) = 4f(x)$ dikali di luar $\\to$ vertical stretching faktor 4 → <b>BENAR</b></li>
+ <li>$h(x) = f(2x)$ dikali di dalam $x \\to$ horizontal compression faktor 1/2 → <b>BENAR</b></li>
+ <li>$g(x) = 4(x^2) = 4x^2$ dan $h(x) = (2x)^2 = 4x^2$. Keduanya identik! → <b>BENAR</b></li>
+ <li>Sesuai definisi, vertical stretching dengan $k>1$ memperbesar nilai $|y|$, menjauhi sumbu-$x$ → <b>BENAR</b></li>
+ </ol>`,
+ hack: `Khusus fungsi pangkat $x^2$, peregangan vertikal faktor $k^2$ memberikan hasil grafik yang sama persis dengan pengompresan horizontal faktor $1/k$.`,
+ trap: `Mengira $4f(x)$ dan $f(2x)$ berbeda pada fungsi $x^2$. Pada fungsi kuadrat dasar, hasilnya sama-sama $4x^2$.`
+ },
+ {
+ id: 18, bab: "Dilatasi Fungsi Modulus", type: "bs",
+ title: "Dilatasi pada Fungsi Nilai Mutlak",
+ body: `Diketahui $f(x) = |x|$.<br>Tentukan **Benar** atau **Salah** untuk setiap pernyataan berikut.`,
+ statements: [
+ "Fungsi $g(x) = |3x|$ dapat dipandang sebagai pengompresan horizontal dari $f(x)$.",
+ "Fungsi $g(x) = |3x|$ juga dapat dipandang sebagai peregangan vertikal dari $f(x)$.",
+ "Grafik $h(x) = 1/2|x|$ lebih curam dibanding $f(x)$.",
+ "Nilai minimum $g(x) = |3x|$ tetap $0$ di $x = 0$."
+ ],
+ correct: ["B","B","S","B"],
+ formal: `<ol>
+ <li>$g(x) = |3x|$ menyempitkan grafik secara horizontal (faktor 1/3) → <b>BENAR</b></li>
+ <li>Sifat nilai mutlak: $|3x| = |3| \\cdot |x| = 3|x|$, sehingga sama dengan peregangan vertikal faktor 3 → <b>BENAR</b></li>
+ <li>Faktor $1/2 < 1$ membuat grafik lebih landai (bukan lebih curam) → <b>SALAH</b></li>
+ <li>Titik puncak/minimum tidak bergeser, tetap di $(0,0)$ → <b>BENAR</b></li>
+ </ol>`,
+ hack: `Faktor skala $0 < k < 1$ pada dilatasi vertikal selalu membuat grafik lebih "pipih/landai", sedangkan $k > 1$ membuat grafik lebih "tegak/curam".`,
+ trap: `Menjawab pernyataan 3 Benar karena menganggap nilai mutlak selalu mempercuram grafik.`
+ },
+ {
+ id: 19, bab: "Translasi & Refleksi Eksponen", type: "bs",
+ title: "Pergeseran dan Refleksi Grafik Eksponen",
+ body: `Diketahui fungsi $f(x) = 2^x$.<br>Tentukan **Benar** atau **Salah** untuk setiap pernyataan berikut.`,
+ statements: [
+ "Grafik $g(x) = 2^{x - 3}$ merupakan pergeseran $f(x)$ sejauh 3 satuan ke kanan.",
+ "Refleksi $f(x)$ terhadap sumbu-$y$ menghasilkan $h(x) = \\left(\\frac{1}{2}\\right)^x$.",
+ "Grafik $k(x) = -2^x$ diperoleh dengan merfleksikan $f(x)$ terhadap sumbu-$x$.",
+ "Asimtot datar dari $g(x) = 2^{x - 3} + 1$ adalah $y = 0$."
+ ],
+ correct: ["B","B","B","S"],
+ formal: `<ol>
+ <li>$2^{x-3}$ melambangkan pergeseran ke kanan sejauh 3 satuan → <b>BENAR</b></li>
+ <li>Refleksi sumbu-$y$: $f(-x) = 2^{-x} = (2^{-1})^x = (1/2)^x$ → <b>BENAR</b></li>
+ <li>Refleksi sumbu-$x$: $-f(x) = -2^x$ → <b>BENAR</b></li>
+ <li>Penambahan konstanta $+1$ menggeser asimtot datar dari $y = 0$ menjadi $y = 1$ → <b>SALAH</b></li>
+ </ol>`,
+ hack: `Asimtot datar fungsi eksponen bentuk $y = a \\cdot b^x + c$ selalu tepat di $y = c$. Pada $2^{x-3} + 1$, asimtotnya adalah $y = 1$.`,
+ trap: `Lupa bahwa pergeseran vertikal $+c$ mengubah posisi asimtot datar grafik eksponensial.`
+ },
+ {
+ id: 20, bab: "Konsep Isometri & Scaling", type: "bs",
+ title: "Sifat Umum Transformasi Fungsi",
+ body: `Tentukan **Benar** atau **Salah** mengenai sifat umum transformasi fungsi $y = f(x)$.`,
+ statements: [
+ "Transformasi $y = f(x) + c$ hanya menggeser grafik secara vertikal.",
+ "Transformasi $y = f(c \\cdot x)$ dengan $c > 1$ menyebabkan grafik memanjang secara horizontal.",
+ "Transformasi $y = -f(x)$ mengubah semua titik puncak maksimum relatif menjadi minimum relatif.",
+ "Pergeseran horizontal tidak mengubah nilai maksimum/minimum dari suatu fungsi terbatas."
+ ],
+ correct: ["B","S","B","B"],
+ formal: `<ol>
+ <li>$+c$ di luar fungsi melambangkan translasi vertikal → <b>BENAR</b></li>
+ <li>Jika $c > 1$, $f(cx)$ mengalami pengompresan (horizontal compression/memendek), bukan memanjang → <b>SALAH</b></li>
+ <li>Refleksi sumbu-$x$ membalik grafik secara vertikal, puncak atas jadi di bawah (maksimum $\\to$ minimum) → <b>BENAR</b></li>
+ <li>Pergeseran horizontal hanya menggeser posisi $x$, nilai $y$ tertinggi/terendah tetap sama → <b>BENAR</b></li>
+ </ol>`,
+ hack: `Skala horizontal bekerja secara "terbalik": dikali $c>1$ justru **menyempit/mengerut**, dikali $0<c<1$ justru **merekang/memanjang**.`,
+ trap: `Terkecoh dengan istilah pengompresan vs peregangan horizontal pada nilai $c > 1$.`
+ },
+ {
+ id: 21, bab: "Aplikasi Transformasi Eksponen", type: "bs",
+ title: "Transformasi Lanjutan Pada Fungsi Eksponen",
+ body: `Diketahui $f(x) = 3^x$.<br>Tentukan **Benar** atau **Salah** untuk setiap pernyataan berikut.`,
+ statements: [
+ "Grafik $g(x) = 3^{x + 2}$ dapat diperoleh dari $f(x)$ dengan pergeseran 2 satuan ke kiri.",
+ "Persamaan $g(x) = 3^{x + 2}$ setara dengan peregangan vertikal $f(x)$ dengan faktor skala 9.",
+ "Grafik $h(x) = 3^{-x} + 4$ selalu memotong sumbu-$y$ di titik $(0, 5)$.",
+ "Domain fungsi $f(x)$ hanya terbatas pada bilangan real positif $x > 0$."
+ ],
+ correct: ["B","B","B","S"],
+ formal: `<ol>
+ <li>Pergeseran ke kiri 2 satuan: ganti $x \\to x + 2 \\Rightarrow 3^{x+2}$ → <b>BENAR</b></li>
+ <li>Sifat eksponen: $3^{x+2} = 3^2 \\cdot 3^x = 9 \\cdot 3^x = 9f(x)$ (peregangan vertikal faktor 9) → <b>BENAR</b></li>
+ <li>Potong sumbu-$y$: $h(0) = 3^0 + 4 = 1 + 4 = 5 \\Rightarrow (0,5)$ → <b>BENAR</b></li>
+ <li>Domain fungsi eksponensial $3^x$ adalah seluruh bilangan real $\\mathbb{R}$, bukan hanya $x > 0$ → <b>SALAH</b></li>
+ </ol>`,
+ hack: `Gunakan sifat eksponen $a^{m+n} = a^m \\cdot a^n$. Pergeseran horizontal pada eksponen setara dengan peregangan vertikal!`,
+ trap: `Terkecoh antara Domain (nilai $x$ yang boleh dimasukkan: seluruh real) dan Range (nilai hasil $y$: harus positif).`
+ }
+];
+
+/* ============================================================
+ STATE & LOGIKA PROGRAM
+ ============================================================ */
+const N = questions.length;
+let userAnswers = {};
+let submitted = false;
+let timerInterval = null;
+const DURASI_MENIT = 60;
+
+/* DETEKSI KECURANGAN */
+let cheatCount = 0;
+const MAX_CHEAT = 3;
+
+function catatPelanggaran(alasan) {
+ if (submitted) return;
+ cheatCount++;
+ document.getElementById('cheat-indicator').textContent = `Pelanggaran: ${cheatCount} / ${MAX_CHEAT}`;
+ 
+ if (cheatCount >= MAX_CHEAT) {
+ alert(`Sistem mendeteksi tindakan terlarang berulang kali (${alasan}). Ujian kamu otomatis di-SUBMIT!`);
+ selesaikan(true);
+ } else {
+ alert(`⚠ PERINGATAN KECURANGAN (${cheatCount}/${MAX_CHEAT})\nKamu terdeteksi melakukan tindakan terlarang (${alasan}). Jika mencapai ${MAX_CHEAT} kali, ujian akan terkeluar dan ter-submit otomatis!`);
+ }
+}
+
+// 1. Deteksi Pindah Tab / Minimize / Buka App Lain (Page Visibility)
+document.addEventListener('visibilitychange', () => {
+ if (document.hidden) {
+ catatPelanggaran('Membuka Tab Lain / Minimize / Keluar Aplikasi');
+ }
+});
+
+// 2. Deteksi Kehilangan Fokus Window / Split Screen / Akses AI
+window.addEventListener('blur', () => {
+ catatPelanggaran('Membuka Jendela Lain / Split Screen / Ask AI');
+});
+
+// 3. Deteksi Ukuran Layar Berubah (Split Screen Canggih & Multi-Device)
+let baseWidth = window.innerWidth;
+let baseHeight = window.innerHeight;
+
+window.addEventListener('resize', () => {
+ const activeEl = document.activeElement;
+ const isTyping = activeEl && activeEl.tagName === 'INPUT';
+
+ const widthChange = Math.abs(window.innerWidth - baseWidth);
+ const heightChange = Math.abs(window.innerHeight - baseHeight);
+
+ const widthThreshold = baseWidth * 0.25;
+ const heightThreshold = baseHeight * 0.25;
+
+ if (widthChange > widthThreshold || (!isTyping && heightChange > heightThreshold)) {
+ catatPelanggaran('Split Screen / Mengubah Ukuran Jendela Ujian');
+ baseWidth = window.innerWidth;
+ baseHeight = window.innerHeight;
+ }
+});
+
+document.addEventListener('focusout', () => {
+ setTimeout(() => {
+ baseWidth = window.innerWidth;
+ baseHeight = window.innerHeight;
+ }, 500);
+});
+
+function renderSoal() {
+ const container = document.getElementById('soal-container');
+ let html = '';
+
+ questions.forEach((q, idx) => {
+ const tagClass = q.type;
+ const tagLabel = q.type === 'pg' ? 'Pilihan Ganda' : (q.type === 'pgk' ? 'PG Kompleks' : 'Benar / Salah');
+
+ html += `<div class="soal ${tagClass}" id="soal-${q.id}">`;
+ html += `<div class="bab-label">${q.bab}</div>`;
+ html += `<div class="soal-head">
+ <div class="soal-num">${idx+1}</div>
+ <div class="soal-title">${q.title}</div>
+ <span class="tag ${tagClass}">${tagLabel}</span>
+ </div>`;
+ html += `<div class="soal-body">${q.body}</div>`;
+
+ if (q.type === 'pg') {
+ html += `<div class="opsi" id="opsi-${q.id}">`;
+ const letters = ['A','B','C','D','E'];
+ q.options.forEach((opt, i) => {
+ html += `<label data-letter="${letters[i]}">
+ <input type="radio" name="q${q.id}" value="${letters[i]}" onchange="pilihPG(${q.id},'${letters[i]}',this)">
+ <span><b>${letters[i]}.</b> ${opt}</span>
+ </label>`;
+ });
+ html += `</div>`;
+ } else if (q.type === 'pgk') {
+ html += `<div class="opsi-pgk" id="opsi-${q.id}">`;
+ const letters = ['A','B','C','D','E'];
+ q.options.forEach((opt, i) => {
+ html += `<label data-letter="${letters[i]}">
+ <input type="checkbox" name="q${q.id}" value="${letters[i]}" onchange="pilihPGK(${q.id},'${letters[i]}',this)">
+ <span><b>${letters[i]}.</b> ${opt}</span>
+ </label>`;
+ });
+ html += `</div>`;
+ } else if (q.type === 'bs') {
+ html += `<table class="bs"><tr><th>Pernyataan</th><th class="c">BENAR</th><th class="c">SALAH</th></tr>`;
+ q.statements.forEach((st, i) => {
+ html += `<tr>
+ <td>${i+1}. ${st}</td>
+ <td class="c" id="bs-cell-${q.id}-${i}">
+ <div class="bs-btn">
+ <button type="button" onclick="pilihBS(${q.id},${i},'B',this)">B</button>
+ <button type="button" onclick="pilihBS(${q.id},${i},'S',this)">S</button>
+ </div>
+ </td>
+ <td class="c" style="font-size:11.5px;color:#889;" id="bs-status-${q.id}-${i}">belum dijawab</td>
+ </tr>`;
+ });
+ html += `</table>`;
+ }
+
+ html += `</div>`;
+ });
+
+ container.innerHTML = html;
+ updateProgress();
+}
+
+function pilihPG(id, letter, el) {
+ if (submitted) { el.checked = false; return; }
+ userAnswers[id] = letter;
+ const wrap = document.getElementById(`opsi-${id}`);
+ wrap.querySelectorAll('label').forEach(l => l.classList.remove('checked'));
+ el.closest('label').classList.add('checked');
+ updateProgress();
+}
+
+function pilihPGK(id, letter, el) {
+ if (submitted) { el.checked = false; return; }
+ if (!userAnswers[id]) userAnswers[id] = [];
+ if (el.checked) {
+ if (!userAnswers[id].includes(letter)) userAnswers[id].push(letter);
+ } else {
+ userAnswers[id] = userAnswers[id].filter(x => x !== letter);
+ }
+ const wrap = document.getElementById(`opsi-${id}`);
+ wrap.querySelectorAll('label').forEach(l => {
+ const inp = l.querySelector('input');
+ if (inp.checked) l.classList.add('checked'); else l.classList.remove('checked');
+ });
+ updateProgress();
+}
+
+function pilihBS(id, idx, val, btn) {
+ if (submitted) return;
+ if (!userAnswers[id]) userAnswers[id] = [];
+ userAnswers[id][idx] = val;
+
+ const cell = document.getElementById(`bs-cell-${id}-${idx}`);
+ cell.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+
+ document.getElementById(`bs-status-${id}-${idx}`).textContent = val === 'B' ? 'Benar' : 'Salah';
+ updateProgress();
+}
+
+function hitungTerjawab() {
+ let count = 0;
+ questions.forEach(q => {
+ const ans = userAnswers[q.id];
+ if (q.type === 'pg') {
+ if (ans) count++;
+ } else if (q.type === 'pgk') {
+ if (ans && ans.length > 0) count++;
+ } else if (q.type === 'bs') {
+ if (ans && ans.filter(x => x !== undefined && x !== null).length === q.statements.length) count++;
+ }
+ });
+ return count;
+}
+
+function updateProgress() {
+ const c = hitungTerjawab();
+ document.getElementById('answered-count').textContent = c;
+ document.getElementById('progress-text').textContent = `${c} / ${N} soal dijawab`;
+ document.getElementById('progress').style.width = `${(c/N)*100}%`;
+}
+
+function mulaiTimer() {
+ let sisa = DURASI_MENIT * 60;
+ timerInterval = setInterval(() => {
+ sisa--;
+ if (sisa <= 0) {
+ clearInterval(timerInterval);
+ selesaikan(true);
+ return;
+ }
+ const m = Math.floor(sisa/60);
+ const s = sisa % 60;
+ document.getElementById('clock').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+ }, 1000);
+}
+
+function nilaiPG(q, ans) {
+ if (!ans) return 0;
+ return ans === q.correct ? 1 : 0;
+}
+
+function nilaiPGK(q, ans) {
+ if (!ans || ans.length === 0) return 0;
+ const benar = q.correct;
+ const dipilih = ans;
+ let jBenar = dipilih.filter(x => benar.includes(x)).length;
+ let jSalah = dipilih.filter(x => !benar.includes(x)).length;
+ let skor = (jBenar - jSalah) / benar.length;
+ return Math.max(0, Math.min(1, skor));
+}
+
+function nilaiBS(q, ans) {
+ if (!ans) return 0;
+ let skor = 0;
+ q.correct.forEach((k, i) => {
+ if (ans[i] === k) skor += 1 / q.correct.length;
+ });
+ return skor;
+}
+
+function hitungSkor() {
+ let total = 0;
+ let benar = 0, salah = 0;
+ const detail = {};
+ questions.forEach(q => {
+ const ans = userAnswers[q.id];
+ let s = 0;
+ if (q.type === 'pg') s = nilaiPG(q, ans);
+ else if (q.type === 'pgk') s = nilaiPGK(q, ans);
+ else if (q.type === 'bs') s = nilaiBS(q, ans);
+ detail[q.id] = s;
+ total += s;
+ if (s >= 0.999) benar++;
+ else salah++;
+ });
+ return { total, benar, salah, detail };
+}
+
+function predikat(nilai) {
+ if (nilai >= 90) return { teks: 'A — SANGAT BAIK 🏆', warna: '#0e7a4a' };
+ if (nilai >= 80) return { teks: 'B — BAIK 👍', warna: '#1f5fa6' };
+ if (nilai >= 70) return { teks: 'C — CUKUP 📘', warna: '#b8860b' };
+ if (nilai >= 60) return { teks: 'D — KURANG ⚠️', warna: '#e67e22' };
+ return { teks: 'E — PERLU BELAJAR LAGI 📚', warna: '#c0392b' };
+}
+
+function selesaikan(force = false) {
+ if (submitted) return;
+
+ const terjawab = hitungTerjawab();
+ if (!force && terjawab < N) {
+ const peringatan = document.getElementById('peringatan');
+ peringatan.classList.add('show');
+ peringatan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+ if (!confirm(`Masih ada ${N - terjawab} soal yang belum dijawab lengkap. Tetap selesaikan ujian?`)) {
+ return;
+ }
+ }
+
+ submitted = true;
+ if (timerInterval) clearInterval(timerInterval);
+
+ const { total, benar, salah } = hitungSkor();
+ const nilai = Math.round((total / N) * 100);
+ const pred = predikat(nilai);
+
+ /* PENGIRIMAN AUTOMATIS KE GOOGLE SHEETS */
+ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8EAmQjcBIlQ2mNiSO6F1g5X8Kpf0GBuBPqi4FUaR73ts4jVoXK_VNT2lpXcNi6-bD/exec";
+
+ const namaSiswa = document.getElementById('nama').value || 'Tanpa Nama';
+ const kelasSiswa = document.getElementById('kelas').value || '-';
+
+ const payload = {
+   nama: namaSiswa,
+   kelas: kelasSiswa,
+   nilai: nilai,
+   predikat: pred.teks,
+   benar: benar,
+   salah: salah,
+   pelanggaran: cheatCount,
+   detailJawaban: userAnswers
+ };
+
+ fetch(SCRIPT_URL, {
+   method: 'POST',
+   mode: 'no-cors',
+   headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify(payload)
+ }).then(() => {
+   console.log('Data berhasil dikirim ke Google Sheets');
+ }).catch(err => {
+   console.error('Gagal mengirim data:', err);
+ });
+
+ const panel = document.getElementById('score-panel');
+ panel.style.display = 'block';
+ const nilaiEl = document.getElementById('nilai-besar');
+ nilaiEl.textContent = nilai;
+ if (nilai < 60) nilaiEl.classList.add('gagal'); else nilaiEl.classList.remove('gagal');
+ const predEl = document.getElementById('predikat');
+ predEl.textContent = pred.teks;
+ predEl.style.color = pred.warna;
+ document.getElementById('stat-benar').textContent = benar;
+ document.getElementById('stat-salah').textContent = salah;
+ document.getElementById('stat-poin').textContent = total.toFixed(2);
+ document.getElementById('stat-maks').textContent = N;
+
+ panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+ renderReview();
+
+ const btn = document.getElementById('btn-submit');
+ btn.disabled = true;
+ btn.textContent = '✅ SUDAH SELESAI';
+
+ document.querySelectorAll('#soal-container input').forEach(inp => {
+ inp.disabled = true;
+ });
+ document.querySelectorAll('#soal-container button').forEach(b => {
+ if (b.closest('.bs-btn')) b.disabled = true;
+ });
+ document.getElementById('peringatan').classList.remove('show');
+}
+
+function renderReview() {
+ const letters = ['A','B','C','D','E'];
+ questions.forEach(q => {
+ const soalEl = document.getElementById(`soal-${q.id}`);
+ const ans = userAnswers[q.id];
+
+ if (q.type === 'pg') {
+ const wrap = document.getElementById(`opsi-${q.id}`);
+ wrap.querySelectorAll('label').forEach(l => {
+ const letter = l.dataset.letter;
+ l.classList.remove('checked','benar-opsi','salah-opsi');
+ l.querySelector('input').disabled = true;
+ if (letter === q.correct) l.classList.add('benar-opsi');
+ if (ans === letter && ans !== q.correct) l.classList.add('salah-opsi');
+ if (ans === letter && ans === q.correct) l.classList.add('benar-opsi');
+ });
+ } else if (q.type === 'pgk') {
+ const wrap = document.getElementById(`opsi-${q.id}`);
+ wrap.querySelectorAll('label').forEach(l => {
+ const letter = l.dataset.letter;
+ l.classList.remove('checked','benar-opsi','salah-opsi');
+ l.querySelector('input').disabled = true;
+ const dipilih = (ans || []).includes(letter);
+ const kunci = q.correct.includes(letter);
+ if (kunci) l.classList.add('benar-opsi');
+ if (dipilih && !kunci) l.classList.add('salah-opsi');
+ if (dipilih && kunci) l.classList.add('benar-opsi');
+ });
+ } else if (q.type === 'bs') {
+ q.correct.forEach((kunci, i) => {
+ const cell = document.getElementById(`bs-cell-${q.id}-${i}`);
+ const pilihan = ans ? ans[i] : null;
+ cell.querySelectorAll('button').forEach(b => {
+ b.classList.remove('active');
+ b.disabled = true;
+ const val = b.textContent.trim();
+ if (val === pilihan) b.classList.add('active');
+ });
+ const status = document.getElementById(`bs-status-${q.id}-${i}`);
+ if (pilihan === kunci) {
+ status.textContent = `✓ Benar (kunci: ${kunci})`;
+ status.style.color = '#0e7a4a';
+ status.style.fontWeight = '700';
+ } else {
+ status.textContent = `✗ Salah (kunci: ${kunci})`;
+ status.style.color = '#c0392b';
+ status.style.fontWeight = '700';
+ }
+ });
+ }
+
+ let jawabanSiswa = '';
+ if (q.type === 'pg') {
+ jawabanSiswa = ans ? `${ans}. ${q.options[letters.indexOf(ans)]}` : '— tidak dijawab —';
+ } else if (q.type === 'pgk') {
+ if (!ans || ans.length === 0) jawabanSiswa = '— tidak dijawab —';
+ else jawabanSiswa = ans.sort().join(', ');
+ } else if (q.type === 'bs') {
+ if (!ans || ans.filter(x => x).length === 0) jawabanSiswa = '— tidak dijawab —';
+ else jawabanSiswa = q.statements.map((_, i) => `${i+1}. ${ans[i] || '?'}`).join(' | ');
+ }
+
+ let kunciJawab = '';
+ if (q.type === 'pg') kunciJawab = `${q.correct}. ${q.options[letters.indexOf(q.correct)]}`;
+ else if (q.type === 'pgk') kunciJawab = q.correct.join(', ');
+ else if (q.type === 'bs') kunciJawab = q.correct.map((k,i) => `${i+1}. ${k}`).join(' | ');
+
+ let skorSoal = 0;
+ if (q.type === 'pg') skorSoal = nilaiPG(q, ans);
+ else if (q.type === 'pgk') skorSoal = nilaiPGK(q, ans);
+ else if (q.type === 'bs') skorSoal = nilaiBS(q, ans);
+
+ const statusBenar = skorSoal >= 0.999;
+ const statusClass = statusBenar ? 'benar' : 'salah';
+ const statusTeks = statusBenar ? `✓ BENAR (${skorSoal.toFixed(2)} poin)` : (skorSoal > 0 ? `◐ SEBAGIAN (${skorSoal.toFixed(2)} poin)` : `✗ SALAH (0 poin)`);
+
+ const reviewHTML = `
+ <div class="review-box">
+ <div class="hasil">
+ <span class="kotak ${statusClass}">${statusTeks}</span>
+ <span class="kotak kunci-jawab">Kunci: ${kunciJawab}</span>
+ </div>
+ <div style="font-size:12.5px;margin:8px 0 10px;color:#556;">
+ <b>Jawabanmu:</b> ${jawabanSiswa}
+ </div>
+ <h4>📖 PEMBAHASAN</h4>
+ <div class="review-grid">
+ <div class="review-card formal">
+ <h5>🏫 Metode Formal</h5>
+ ${q.formal}
+ </div>
+ <div class="review-card hack">
+ <h5>⚡ The Secret Hacks</h5>
+ ${q.hack}
+ </div>
+ </div>
+ <div class="jebakan"><b>JEBAKAN:</b> ${q.trap}</div>
+ </div>`;
+
+ soalEl.insertAdjacentHTML('beforeend', reviewHTML);
+ });
+
+ if (window.MathJax && window.MathJax.typesetPromise) {
+ MathJax.typesetPromise().catch(err => console.log(err));
+ }
+}
+
+function resetUjian() {
+ if (submitted) {
+ if (!confirm('Ujian sudah selesai. Reset akan menghapus semua jawaban dan hasil. Lanjutkan?')) return;
+ } else {
+ if (!confirm('Reset akan menghapus semua jawabanmu. Lanjutkan?')) return;
+ }
+ userAnswers = {};
+ submitted = false;
+ cheatCount = 0;
+ document.getElementById('cheat-indicator').textContent = `Pelanggaran: 0 / ${MAX_CHEAT}`;
+ document.getElementById('score-panel').style.display = 'none';
+ document.getElementById('peringatan').classList.remove('show');
+ const btn = document.getElementById('btn-submit');
+ btn.disabled = false;
+ btn.textContent = '✅ SELESAI & LIHAT SKOR';
+ if (timerInterval) clearInterval(timerInterval);
+ document.getElementById('clock').textContent = '60:00';
+ renderSoal();
+ mulaiTimer();
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+ renderSoal();
+ mulaiTimer();
+ if (window.MathJax && window.MathJax.typesetPromise) {
+ MathJax.typesetPromise().catch(err => console.log(err));
+ }
+});
+</script>
+
+</body>
+</html>
